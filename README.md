@@ -79,5 +79,38 @@ LIMIT 5;
 
 ```
 
+### Table 4: Film category
+The 4th table we'll be going through is the film_category table. This table shows us that multiple films will appear in each relevant category. 
+
+``` sql
+SELECT *
+FROM dvd_rentals.film_category
+LIMIT 5;
+
+```
+
+**OUTPUT**:
+
+<img width="559" alt="image" src="https://user-images.githubusercontent.com/77873198/175336671-d97609d8-f253-4c8e-99ca-8092d453e1bc.png">
+
+This is nice to have. However, we do need to access the categories names and we can see that the film_category table is linked to the category table through the category_id key. The category table actually has the name within it. 
+
+
+### Table 5: Category
+
+This is the table that will allows us to access the category name. 
+
+``` sql
+
+SELECT *
+FROM dvd_rentals.category
+LIMIT 5;
+
+```
+
+<img width="587" alt="image" src="https://user-images.githubusercontent.com/77873198/175337329-146c5438-d10b-4c70-8211-ac0ccfec33ea.png">
+
+
+
 
 
