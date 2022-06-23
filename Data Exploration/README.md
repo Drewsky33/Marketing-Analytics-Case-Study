@@ -82,3 +82,36 @@ LIMIT 5;
 ```
 
 <img width="587" alt="image" src="https://user-images.githubusercontent.com/77873198/175337329-146c5438-d10b-4c70-8211-ac0ccfec33ea.png">
+
+
+### Table 6: film_actor
+
+The film_actor table will be key in allowing us to find the actor's name. The film_id column from the film_category part of the table allows us to join with this table. The actor_id value in this table will then be used to connect to the actor table which does have the name information for each actor. This is what the `film_actor` table looks like. 
+
+``` sql
+SELECT *
+FROM dvd_rentals.film_actor
+LIMIT 5;
+```
+**OUTPUT**:
+
+
+<img width="517" alt="image" src="https://user-images.githubusercontent.com/77873198/175353314-cec3ffcd-0c3e-446b-95ea-b2c2b98c91d9.png">
+
+From the output above we can see that there are multiple rows for actor_id which would make some sense because the actor probably appeared in more than one film. Finally, we can use that actor_id column to later connect to the actor table. Let's have a look at that table.
+
+### Table 7: actor
+
+``` sql
+
+SELECT *
+FROM dvd_rentals.actor
+LIMIT 10;
+
+```
+**OUTPUT**:
+
+<img width="794" alt="image" src="https://user-images.githubusercontent.com/77873198/175353866-10ce5676-c7e9-426b-b663-0f772a537583.png">
+
+The table shows the first and last names for each actor and is linked to their actor_id. Using this key we can find out which films an actor appears in by joining this table to the film_actor table with our actor_id column/key. 
+
