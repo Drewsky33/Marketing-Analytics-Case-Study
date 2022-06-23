@@ -26,7 +26,6 @@ Requirements:
 
 ## Data Exploration
 
-
-
+The data exploration part of the analysis can be found [here](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/tree/main/Data%20Exploration).
 
 
