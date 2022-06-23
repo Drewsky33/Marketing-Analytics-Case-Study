@@ -25,6 +25,7 @@ Requirements:
   - If they don't 1 film recommendation, they need to be flagged with a separator actor exclusion flag. 
 
 ## Data Exploration
+<img width="775" alt="image" src="https://user-images.githubusercontent.com/77873198/175354413-84552686-57c5-4cc0-95cc-47f69ed85f48.png">
 
 The data exploration part of the analysis can be found [here](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/tree/main/Data%20Exploration).
 
