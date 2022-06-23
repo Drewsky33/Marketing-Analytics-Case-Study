@@ -29,6 +29,6 @@ Requirements:
 
 [SOURCE: Serious SQL](https://www.datawithdanny.com/)
 
-The data exploration part of the analysis can be found [here](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/tree/main/Data%20Exploration).
+The data exploration part of the analysis can be found [here](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/tree/main/Data%20Exploration). In this part of the project I looked at the tables indiviudally from the chart above, observed their links, and paths I need to take to secure vital pieces of data that will be used in the e-mail marketing campaign. 
 
 
