@@ -47,3 +47,31 @@ The second category insight text will be:
 <img width="634" alt="image" src="https://user-images.githubusercontent.com/77873198/175362969-451b64a2-c37a-4982-9eb8-e24f5812e076.png">
 
 ### Identifying key information for actors
+
+I'll start by visualizing what the ideal output will look like and then I'll tell why each part of the output is important:
+
+<img width="348" alt="image" src="https://user-images.githubusercontent.com/77873198/175645562-4ea5e87b-a2f2-4f03-b02b-a1785b34c151.png">
+
+The fields in the table will bue used to generate the following script for the marketing campaign:
+
+'You've watched `rental_count` films feature `actor_name`! Here are some other films `first_name` stars in that might interest you!\
+
+From that expected script we can ssee that we'll need to populate with the rental count, the actors name, and their first name. 
+
+### Making Film recommendations
+Finally, the last parts of the SQL output table we'll need to generate is the film recommendations for each category and actor. 
+
+We'll have the all of the information about the actor, the customer, but after the `customer_id` column we will need to have the 3 recommendations for both top categories. Finally, after those we'll need the 3 recommendations based on the top actor_count.
+
+### Key columns needed:
+**For analysis:**
+- `customer_id`: We are going to need the customer_id column to identify the customer. 
+- `title`: We will need the title column from the film table. 
+- `name`: We need the category name column from the category table so we can identify the top categories. 
+- `first_name` & `last_name` columns will be needed to identify the top most popular actor. 
+
+**For joining tables**:
+- `inventory_id`: This table links the rental column to the inventory table which provides a link to the film table. 
+- `film_id`: This column links us to the film table and the film_category table which has links to the category column **AND** it links us to the film_actor table which has a link to the actor table. 
+- `category_id`: The category id column in the film_category table will link us to the category table where we can extract the name. 
+- `actor_id`: The film_actor table has a link to the actor table through the actor_id column and this allows us to extract the actor's first and last_name. 
