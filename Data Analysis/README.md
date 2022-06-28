@@ -98,4 +98,112 @@ Having an output like above will be nice, but I notice that includes only two un
 
 <img width="273" alt="image" src="https://user-images.githubusercontent.com/77873198/176064726-b73f04c6-d431-4f72-bf81-c9e2cad59af2.png">
 
+So as we can see, we need to aggregate based on the category name. However, we need to get all of the data necessary into 1 table. This is where we have to implement some joins. The two columns that will pave way to the analysis for the rest of the project will start with the two columns:
+- `customer_id`: rental table
+- `category_name`: category table. 
 
+We have to start at the rentals table because it's the only place where the customer_id is present. We now have our starting and end points for our SQL join journey, but here's what it looks visualized. 
+
+<img width="722" alt="image" src="https://user-images.githubusercontent.com/77873198/176065755-87f3f896-1955-429b-85cc-3a6a062549bd.png">
+
+Image from [Serious SQL](https://www.datawithdanny.com/courses/serious-sql)
+
+The route we will take is: 
+ - Part 1: rental -> inventory through inventory_id
+ - Part 2: inventory -> film through film_id
+ - Part 3: film -> film_category through film_id
+ - Part 4: film_category -> category through category_id
+
+### Choosing Join Types
+I need to answer the following checklist before choosing the type of join to use:
+
+1. What is the purpose of joining these two tables?
+  - We need to generate the record count calculation. This involved the customer_id for each customer and the number of films for each category. So first, I want to inspect a customer_id to see what information shows up. 
+
+``` sql
+SELECT *
+FROM dvd_rentals.rental
+WHERE customer_id = 120;
+
+```
+**OUTPUT**:
+
+
+<img width="1149" alt="image" src="https://user-images.githubusercontent.com/77873198/176066786-09014541-7045-4860-bf06-9001fd41164a.png">
+
+
+It looks like for each customer_id we have multiple rental_ids which means these are transactions or rentals. An important thing to note is the rentals aren't tracked at the film_id level. We know from the ERD visual before that the film_id information is available in the inventory table. There is a need for a join between the two. So which type of join do we use?
+- A left join will return all information from the base table our rental table.
+- An inner join will return all of the information that is present between both tables. 
+
+Since we are matching on the inventory_id between tables I need to know the distribution for inventory_id for the `rental` table and the `inventory` table. I also need to know if there is overlap between the inventory_id for each table or if there are any missing values. Essentially we want to know:
+  * How many records exist per foreign key value in the left and right table?
+  * Is there overlap between this key? Are there missing values between these two tables?
+
+### Generating Hypotheses:
+We know that the rental table has every rental for each customer. So it makes some sense that we think there should be a valid inventory_id for each record in the rental table when joining. 
+
+It could also make some sense that records could be rented out by multiple customers at different times since customers will return the DVD when done. 
+
+With this information we are going to generate some hypotheses:
+- The number of unique inventory_id records will be equal in both dvd_rentals.rental and dvd_rentals.inventory tables. 
+- There will be multiple records per unique inventory_id in the dvd_rentals.rental table.
+- There will be multiple inventory_id records per unique film_id value in the dvd_rentals.inventory table. 
+**Next** I will try to validate my hypotheses through the use of some queries. 
+- Hypotheses 1: The number of unique inventory_id records will be equal in both dvd_rentals.rental and dvd_rentals.inventory tables. 
+``` sql
+SELECT
+  COUNT(DISTINCT inventory_id)
+FROM dvd_rentals.rental;
+
+```
+**OUTPUT**:
+
+<img width="173" alt="image" src="https://user-images.githubusercontent.com/77873198/176068452-61c50e61-95d6-4999-ae37-5fc4efcc9d73.png">
+
+
+``` sql
+SELECT
+  COUNT(DISTINCT inventory_id)
+FROM dvd_rentals.inventory;
+
+```
+
+**OUTPUT**
+
+<img width="179" alt="image" src="https://user-images.githubusercontent.com/77873198/176068627-ff8263e9-24f3-42cc-9f52-a2cc83f23392.png">
+
+Hmmm it looks like the inventory table has 1 additional value. This would invalidate the first hypotheses that the two tables are similar. An explanation off the top of my head is that the extra value in the inventory table could be a DVD that hasn't been rented yet. 
+
+- Hypotheses 2: There will be multiple records per unique inventory_id in the dvd_rentals.rental table.
+
+``` sql
+-- generate group by counts oon the target column 
+WITH counts_base AS (
+  SELECT
+    inventory_id AS target_column_values,
+    COUNT(*) AS row_counts
+  FROM dvd_rentals.rental
+  GROUP BY target_column_values
+)
+
+-- Summarize the group by counts by grouping again on the row_counts from the CTE above 
+
+SELECT
+  row_counts,
+  COUNT(target_column_values) AS count_of_target_values
+FROM counts_base
+GROUP BY row_counts
+ORDER BY row_counts;
+
+```
+
+**OUTPUT**:
+
+<img width="381" alt="image" src="https://user-images.githubusercontent.com/77873198/176069569-bf495fe7-e0c9-4340-ad83-a6703437f404.png">
+
+
+
+
+2. What is the distribution of foreign keys within each table?
+4. How many unique foreign key values exist in each table?
