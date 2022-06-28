@@ -75,3 +75,27 @@ We'll have the all of the information about the actor, the customer, but after t
 - `film_id`: This column links us to the film table and the film_category table which has links to the category column **AND** it links us to the film_actor table which has a link to the actor table. 
 - `category_id`: The category id column in the film_category table will link us to the category table where we can extract the name. 
 - `actor_id`: The film_actor table has a link to the actor table through the actor_id column and this allows us to extract the actor's first and last_name. 
+
+
+### Join Analysis
+Now that we've identified which kinds of columns we need, how the tables link, and have an idea of our expected output. We should analyze the different types of joins and whether or not they meet or needs. First, we need to show our desired final state:
+
+<img width="737" alt="image" src="https://user-images.githubusercontent.com/77873198/176062772-c45927fa-475c-4eec-a216-a9af91ba193b.png">
+
+One more time I define the need columns need to generate the output above:
+- `category_name`: The name of the top 2 ranking categories.
+- `rental_counts`: How many totlal films have they watched in this category?
+- `average_comparison`: How many films more watched in comparison to the average for the DVD Rental CO customer
+- `percentile`: How does the customer rank is in relation to the top X% compared to other customers in the category?
+- `category_percentage`: What proportion of total films watched does this category make up?
+
+### Reverse Engineering
+- First, we'll want to get the base table without all the metrics created. How do I get there? It's perhaps easier to go to just the customer_id, category_name, and rental_count parts of the table which will be instrument in constructing the metrics. 
+
+<img width="288" alt="image" src="https://user-images.githubusercontent.com/77873198/176064449-b23803ad-1cca-42c9-8aa2-b90beab0b9e2.png">
+
+Having an output like above will be nice, but I notice that includes only two unique values for each customer_id. AKA the top categories. However, in order to get to the top 2 categories we need calculate the rental count for all categories and then filter for the top 2. So going back further we want something like this:
+
+<img width="273" alt="image" src="https://user-images.githubusercontent.com/77873198/176064726-b73f04c6-d431-4f72-bf81-c9e2cad59af2.png">
+
+
