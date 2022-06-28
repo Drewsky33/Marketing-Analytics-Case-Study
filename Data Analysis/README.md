@@ -149,8 +149,10 @@ With this information we are going to generate some hypotheses:
 - The number of unique inventory_id records will be equal in both dvd_rentals.rental and dvd_rentals.inventory tables. 
 - There will be multiple records per unique inventory_id in the dvd_rentals.rental table.
 - There will be multiple inventory_id records per unique film_id value in the dvd_rentals.inventory table. 
+
+
 **Next** I will try to validate my hypotheses through the use of some queries. 
-- Hypotheses 1: The number of unique inventory_id records will be equal in both dvd_rentals.rental and dvd_rentals.inventory tables. 
+- Hypothesis 1: The number of unique inventory_id records will be equal in both dvd_rentals.rental and dvd_rentals.inventory tables. 
 ``` sql
 SELECT
   COUNT(DISTINCT inventory_id)
@@ -175,7 +177,7 @@ FROM dvd_rentals.inventory;
 
 Hmmm it looks like the inventory table has 1 additional value. This would invalidate the first hypotheses that the two tables are similar. An explanation off the top of my head is that the extra value in the inventory table could be a DVD that hasn't been rented yet. 
 
-- Hypotheses 2: There will be multiple records per unique inventory_id in the dvd_rentals.rental table.
+- Hypothesis 2: There will be multiple records per unique inventory_id in the dvd_rentals.rental table.
 
 ``` sql
 -- generate group by counts oon the target column 
@@ -201,6 +203,39 @@ ORDER BY row_counts;
 **OUTPUT**:
 
 <img width="381" alt="image" src="https://user-images.githubusercontent.com/77873198/176069569-bf495fe7-e0c9-4340-ad83-a6703437f404.png">
+
+
+Based on the output, we can confirm that there are multiple rows per inventory_id in the dvd_rentals.rental table. 
+
+- Hypothesis 3: There will be multiple inventory_id records per unique film_id value in the dvd_rentals.inventory table. 
+
+``` sql
+-- Generate group by counts on the film_id column
+WITH counts_base AS (
+  SELECT
+    film_id AS unique_film_id,
+    COUNT(DISTINCT inventory_id) AS unique_record_counts
+  FROM dvd_rentals.inventory
+  GROUP BY unique_film_id
+)
+
+-- summarize the group by counts above by grouping again on the row_counts from counts_base cte 
+SELECT
+  unique_record_counts,
+  COUNT(unique_film_id) AS count_film_id
+FROM counts_base
+GROUP BY unique_record_counts
+ORDER BY unique_record_counts;
+
+```
+
+**OUTPUT:**
+
+<img width="463" alt="image" src="https://user-images.githubusercontent.com/77873198/176075752-3b0f7ff2-c021-4ece-881d-f9a3735546f6.png">
+
+
+Based on the output above, we can confirm that there are multiple unique inventory_id per film_id values in the inventory table. 
+
 
 
 
