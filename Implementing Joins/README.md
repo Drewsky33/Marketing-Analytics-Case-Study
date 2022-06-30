@@ -272,3 +272,8 @@ We now have the customer_id, the film_id, and the title of the film. We're makin
 
 [Image from Serious SQL](https://www.datawithdanny.com/)
 
+We are going to make the assumption that the film_id key has a 1 to 1 relationship in both the film table and the film_category table, but to be sure we can confirm this assumption after performing the join. So our next join, is going to be joining the film_category and category tables so that we can have the unique category names. 
+
+``` sql
+
+
