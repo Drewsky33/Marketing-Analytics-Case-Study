@@ -48,3 +48,18 @@ UNION
 **OUTPUT**
 
 <img width="586" alt="image" src="https://user-images.githubusercontent.com/77873198/176082355-f304fb2a-b862-48d6-9e97-99a778f2359e.png">
+
+Great it looks like there is now difference between joining the two tables. Next, we have to go through part two of our table joining journey which was joining the inventory table to the film table to get the film_id foreign key. 
+
+Again, we need to go through our questions of why we are completing this join:
+
+1. What's the purpose of this join?
+**Hypothesis for this table**
+- We want to match the films on the film_id so that we can get the film name or `title`. 
+- There is most likely a ]
+
+2. What is the distribution of the foreign keys within each table?
+
+
+3. How many unique foreign key values exist in each table?
+
