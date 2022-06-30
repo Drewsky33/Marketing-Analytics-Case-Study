@@ -43,7 +43,30 @@ We're going to use this to work towards the insights that we must provide for ea
 
 We need to generate these fields using the base information we have. 
 
-Some things to note. Our `average_comparison`, `percentile`, and `category_percentage` values are all dependent on the the category_counts that we need to generate. 
+Some things to note. Our `average_comparison`, `percentile`, and `category_percentage` values are all dependent on the the category_counts that we need to generate. Let's calculate the record counts by aggregating by customer_id and the film_category just to see how our output will look.
+
+``` sql
+SELECT
+  customer_id,
+  category_name,
+  COUNT(*) AS rental_counts
+FROM complete_joint_dataset
+WHERE customer_id IN (1, 2, 3)
+GROUP BY
+  customer_id,
+  category_name
+ORDER BY
+  customer_id,
+  rental_counts DESC;
+  
+```
+
+**OUTPUT**
 
 
+<img width="643" alt="image" src="https://user-images.githubusercontent.com/77873198/176788287-b26f5d79-d45d-4fae-b4fb-f54f49bb7983.png">
 
+Hmm it looks like we have ties. We need to find a way to break the tie between these categories so that we can properly populate a the email template. 
+
+### Dealing with ties 
+In the case that we have categories with the same record counts we need to break the tie. What we are going to do is include the rental_date column from our base table and we are going to take the max of that column to signify the most recent rental. 
