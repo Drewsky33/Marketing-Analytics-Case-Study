@@ -266,4 +266,8 @@ SELECT * FROM join_parts_1_and_2;
 <img width="539" alt="image" src="https://user-images.githubusercontent.com/77873198/176771994-d721cf45-eba6-4859-8985-4f559680419d.png">
 
 
-We now have the customer_id, the film_id, and the title of the film. We're making progress! Next, we have to get from the 
+We now have the customer_id, the film_id, and the title of the film. We're making progress! Next, let's have a look at our join journey progress and decided where to go next. 
+
+<img width="656" alt="image" src="https://user-images.githubusercontent.com/77873198/176774411-c619ae0d-a7ef-4193-8b6f-9d51fbe1c617.png">
+
+  ON inventory.film_id = film.film_id;
