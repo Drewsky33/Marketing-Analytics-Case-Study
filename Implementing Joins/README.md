@@ -306,5 +306,52 @@ We finally have the first table we need in order to calculate the the category i
 
 ``` sql
 
+DROP TABLE IF EXISTS complete_left_joint_dataset;
+CREATE TEMP TABLE complete_left_joint_dataset AS 
+SELECT
+  rental.customer_id,
+  inventory.film_id,
+  film.title,
+  film_category.category_id,
+  category.name AS category_name
+FROM dvd_rentals.rental
+LEFT JOIN dvd_rentals.inventory
+  ON rental.inventory_id = inventory.inventory_id
+LEFT JOIN dvd_rentals.film
+  ON inventory.film_id = film.film_id
+LEFT JOIN dvd_rentals.film_category
+  ON film.film_id = film_category.film_id
+LEFT JOIN dvd_rentals.category
+  ON film_category.category_id = category.category_id;
+  
+-- Compare the two tables
+
+(
+  SELECT
+    'left join' AS join_type,
+    COUNT(*) AS record_counts
+  FROM complete_left_joint_dataset
+  
+  UNION 
+  
+  SELECT
+    'inner join' AS join_type,
+    COUNT(*) AS record_counts
+  FROM complete_joint_dataset
+);
+
+```
+
+**OUTPUT**
+
+
+<img width="323" alt="image" src="https://user-images.githubusercontent.com/77873198/176778047-8f05eb57-3aef-42dc-9860-a69da8464a08.png">
+
+
+And now we can confirm there isn't a difference between the two types of joins here. We know this because tracking back from our original dataset:
+1. All of the foreign keys that exists in the `dvd_rentals.rental` dataset also exist in the target table `dvd_rentals.inventory`. 
+2. We should expect that the same would be true as we join onto the film table as well since we are moving from the base table rental. 
+3. When we inspected the join from the dvd_rentals.inventory table onto the dvd_rentals.film table we saw that the values remained the same still because all we are adding is a title from the film_category and a category from the category table. 
+
 
 
