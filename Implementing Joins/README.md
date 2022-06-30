@@ -270,4 +270,3 @@ We now have the customer_id, the film_id, and the title of the film. We're makin
 
 <img width="656" alt="image" src="https://user-images.githubusercontent.com/77873198/176774411-c619ae0d-a7ef-4193-8b6f-9d51fbe1c617.png">
 
-  ON inventory.film_id = film.film_id;
