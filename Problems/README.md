@@ -3,3 +3,47 @@
 
 We have our base table that we'll use to start solving the problems so that we can populate our e-mail template with the correct information for each customer. 
 
+``` sql
+
+DROP TABLE IF EXISTS complete_joint_dataset;
+CREATE TEMP TABLE complete_joint_dataset AS
+SELECT
+  rental.customer_id,
+  inventory.film_id,
+  film.title,
+  rental.rental_date,
+  category.name AS category_name
+FROM dvd_rentals.rental
+INNER JOIN dvd_rentals.inventory
+  ON rental.inventory_id = inventory.inventory_id
+INNER JOIN dvd_rentals.film
+  ON inventory.film_id = film.film_id
+INNER JOIN dvd_rentals.film_category
+  ON film.film_id = film_category.film_id
+INNER JOIN dvd_rentals.category
+  ON film_category.category_id = category.category_id;
+
+SELECT * FROM complete_joint_dataset limit 10;
+
+```
+
+**OUTPUT**
+
+
+<img width="1159" alt="image" src="https://user-images.githubusercontent.com/77873198/176781668-dd28175d-1b27-4fbf-9cd7-d55305df9b65.png">
+
+We're going to use this to work towards the insights that we must provide for each customer. 
+
+### Revisiting the information we want
+- `category_name`: We want the top two categories by rank for each customer.
+- `rental_count`: We want the number of films rented for each category
+- `average_comparison`: How many films has the customer watched in comparison to the average DVD Rental Co customer?
+- `percentile`: A ranking for where the customer fall in the topX% compared to others who view this film category. 
+- `category_percentage`: What proportion of total films wathced does this category make up?
+
+We need to generate these fields using the base information we have. 
+
+Some things to note. Our `average_comparison`, `percentile`, and `category_percentage` values are all dependent on the the category_counts that we need to generate. 
+
+
+
