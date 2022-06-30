@@ -70,3 +70,23 @@ Hmm it looks like we have ties. We need to find a way to break the tie between t
 
 ### Dealing with ties 
 In the case that we have categories with the same record counts we need to break the tie. What we are going to do is include the rental_date column from our base table and we are going to take the max of that column to signify the most recent rental. 
+
+``` sql
+
+SELECT
+  customer_id,
+  category_name,
+  COUNT(*) AS rental_counts,
+  MAX(rental_date) AS latest_rental_date
+FROM complete_joint_dataset
+WHERE customer_id IN (1, 2, 3)
+GROUP BY
+  customer_id,
+  category_name
+ORDER BY
+  customer_id,
+  rental_counts DESC
+  latest_rental_date DESC;
+
+```
+
