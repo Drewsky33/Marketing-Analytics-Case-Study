@@ -275,5 +275,36 @@ We now have the customer_id, the film_id, and the title of the film. We're makin
 We are going to make the assumption that the film_id key has a 1 to 1 relationship in both the film table and the film_category table, but to be sure we can confirm this assumption after performing the join. So our next join, is going to be joining the film_category and category tables so that we can have the unique category names. 
 
 ``` sql
+DROP TABLE IF EXISTS complete_joint_dataset;
+CREATE TEMP TABLE complete_joint_dataset AS 
+SELECT
+  rental.customer_id,
+  inventory.film_id,
+  film.title, 
+  film_category.category_id,
+  category.name AS category_name
+FROM dvd_rentals.rental
+INNER JOIN dvd_rentals.inventory
+  ON rental.inventory_id = inventory.inventory_id
+INNER JOIN dvd_rentals.film
+  ON inventory.film_id = film.film_id
+INNER JOIN dvd_rentals.film_category
+  ON film.film_id = film_category.film_id
+INNER JOIN dvd_rentals.category
+  ON film_category.category_id = category.category_id;
+  
+SELECT * FROM complete_joint_dataset;
+
+```
+
+**OUTPUT**:
+
+<img width="1162" alt="image" src="https://user-images.githubusercontent.com/77873198/176776375-275f878b-2374-421b-8fec-ac52ce9497cc.png">
+
+
+We finally have the first table we need in order to calculate the the category information for our email template. But let's confirm that there we won't be a difference between an inner join and left join by comparing them. 
+
+``` sql
+
 
 
