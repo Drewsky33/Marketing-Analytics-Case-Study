@@ -90,3 +90,15 @@ ORDER BY
 
 ```
 
+**OUTPUT**
+
+<img width="942" alt="image" src="https://user-images.githubusercontent.com/77873198/176789429-fb8aa8ac-5121-4739-ab4d-cacc367a97df.png">
+
+
+This metric allows us to take into account the customer's most recent purchase history when breaking a tie. 
+
+## Calculating Averages for the top two categories
+We now have all of the information needed to identify the top two categories per customer. 
+
+
+
