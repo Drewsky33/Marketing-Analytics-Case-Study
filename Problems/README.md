@@ -197,8 +197,76 @@ RETURNING * ;
 
 
 ### Calculating the Percentile column
-For this column we need to calculate how the customer ranks in terms of the top X% compared to other customers in the category. In order to get this insight we need to calculate the percentile value for each customer by comparing their result for films watched in a particular category with other customer records in that category. We'll also need to reverse the percentage as we say we are in the top 1 or 2% in the ad. 
+For this column we need to calculate how the customer ranks in terms of the top X% compared to other customers in the category. In order to get this insight we need to calculate the percentile value for each customer by comparing their result for films watched in a particular category with other customer records in that category. We'll also need to reverse the percentage as we say we are in the top 1 or 2% in the ad. Additionally, if we want to produce the insight:
 
+![image](https://user-images.githubusercontent.com/77873198/176803897-63933c8e-c980-4ec3-85ba-a75c8d8b61d1.png)
+
+We will need to avoid getting a 0% so will use the CEILING FUNCTION to take the upper integer for each percentile metric. 
+
+
+``` sql
+
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  -- use CEILING to round up to nearest integer
+  CEILING(
+    100 * PERCENT_RANK() OVER(
+      PARTITION BY category_name
+      ORDER BY rental_count DESC
+    )
+  ) AS percentile
+FROM category_rental_counts
+ORDER BY customer_id, rental_count DESC
+LIMIT 2;
+
+```
+
+**OUTPUT**
+
+<img width="813" alt="image" src="https://user-images.githubusercontent.com/77873198/176804217-36a6c0e2-07de-42ea-8b45-79f900a0c214.png">
+
+
+The output above will be readable for each customer. 
+
+Now, we'll push this transformation into another temp table and we'll remove the rental_count column since it's already present in the category_rental_counts table
+
+``` sql
+
+DROP TABLE IF EXISTS customer_category_percentiles;
+CREATE TEMP TABLE customer_category_percentiles AS
+SELECT
+  customer_id,
+  category_name,
+  -- Use ceiling to round up
+  CEILING (
+    100 * PERCENT_RANK() OVER(
+      PARTITION BY category_name
+      ORDER BY rental_count DESC
+    )
+  ) AS percentile
+FROM category_rental_counts;
+
+-- inspect the table 
+
+SELECT *
+FROM customer_category_percentiles
+ORDER BY customer_id, percentile
+LIMIT 2;
+
+```
+
+**OUTPUT**
+
+<img width="560" alt="image" src="https://user-images.githubusercontent.com/77873198/176804633-f996fb69-b641-4b47-85b3-23993f044fa4.png">
+
+
+We have the kind of output we want for each customer now. In total we now have 4 temp tables that we've generated. 3 for the metrics we were looking to find and one for the rental counts. Now we will join them. Our tables are:
+- `category_rental_counts`
+- `customer_total_rental_counts`
+- `average_category_rental_counts
+- `customer_category_percentiles`
 
 
 
