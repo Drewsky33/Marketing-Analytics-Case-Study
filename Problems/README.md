@@ -133,5 +133,73 @@ It looks fine, what we'll do next is to generate the total rentals per customer 
 
 ``` sql
 
+DROP TABLE IF EXISTS customer_total_rentals;
+CREATE TEMP TABLE customer_total_rentals AS 
+SELECT
+  customer_id,
+  SUM(rental_count) AS total_rental_count
+FROM category_rental_counts
+GROUP BY customer_id;
+
+-- Check the output for the first 5 customer_id values
+SELECT *
+FROM customer_total_rentals
+WHERE customer_id <= 5
+ORDER BY customer_id;
+
+```
+
+**OUTPUT**
+
+<img width="371" alt="image" src="https://user-images.githubusercontent.com/77873198/176798039-9695dfaf-b27c-4867-9846-0236a04e7c72.png">
+
+
+We now have the total_rental_count by customer. We want to know the average category rental counts now. 
+
+### Calculating the Average Category Rental Counts
+
+``` sql
+DROP TABLE IF EXISTS average_category_rental_counts;
+CREATE TEMP TABLE average_category_rental_counts AS 
+SELECT
+  category_name,
+  AVG(rental_count) AS avg_rental_count
+FROM category_rental_counts
+GROUP BY
+  category_name;
+  
+-- Produce the table in avg_rental_count DESC order
+
+SELECT *
+FROM average_category_rental_counts
+ORDER BY 
+  avg_rental_count DESC;
+```
+
+**OUTPUT**
+
+<img width="457" alt="image" src="https://user-images.githubusercontent.com/77873198/176798471-16b95047-eea2-4761-a4e5-3c047e5e6d2c.png">
+
+
+Now we have the rental_count averages for each category. However, you can't watch a decimal more of a movie so we need to get the floor values for the calculations. We can do this by updating the table. 
+
+``` sql
+
+UPDATE average_category_rental_counts
+SET avg_rental_count = FLOOR(avg_rental_count)
+RETURNING * ;
+
+```
+
+**OUTPUT**
+
+<img width="412" alt="image" src="https://user-images.githubusercontent.com/77873198/176799459-db354507-3dd5-4a99-a0d1-89664c699a4d.png">
+
+
+### Calculating the Percentile column
+For this column we need to calculate how the customer ranks in terms of the top X% compared to other customers in the category. In order to get this insight we need to calculate the percentile value for each customer by comparing their result for films watched in a particular category with other customer records in that category. We'll also need to reverse the percentage as we say we are in the top 1 or 2% in the ad. 
+
+
+
 
 
