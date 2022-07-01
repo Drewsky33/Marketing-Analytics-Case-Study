@@ -270,4 +270,109 @@ We have the kind of output we want for each customer now. In total we now have 4
 
 
 
+### Implementing the join
+
+``` sql
+
+DROP TABLE IF EXISTS customer_category_joint_table;
+CREATE TEMP TABLE customer_category_joint_table AS
+SELECT
+  t1.customer_id,
+  t1.category_name,
+  t1.rental_count,
+  t2.total_rental_count,
+  t3.avg_rental_count,
+  t4.percentile
+FROM category_rental_counts AS t1
+INNER JOIN customer_total_rentals AS t2
+  ON t1.customer_id = t2.customer_id
+INNER JOIN average_category_rental_counts AS t3
+  ON t1.category_name = t3.category_name
+INNER JOIN customer_category_percentiles AS t4
+  ON t1.customer_id = t4.customer_id
+  AND t1.category_name = t4.category_name;
+
+-- Query the joined table 
+
+SELECT *
+FROM customer_category_joint_table
+WHERE customer_id = 1
+ORDER BY percentile;
+
+```
+
+**OUTPUT**
+
+<img width="657" alt="image" src="https://user-images.githubusercontent.com/77873198/176806632-279490fd-2a57-4bfc-a3b6-a34f917f483f.png">
+
+
+We are almost to the final output of our table. The last thing we need to add in is:
+
+- `average_comparison`: How many more films has the customer watched compared to the average DVD Rental Co customer?
+- `category_percentage`: What proportion of each customer’s total films watched does this count make?
+
+``` sql
+
+-- Adding the calculations
+
+DROP TABLE IF EXISTS customer_category_joint_table;
+CREATE TEMP TABLE customer_category_joint_table AS 
+SELECT
+  t1.customer_id, 
+  t1.category_name,
+  t1.rental_count,
+  t1.latest_rental_date,
+  t2.total_rental_count,
+  t3.avg_rental_count,
+  t4.percentile,
+  t1.rental_count - t3.avg_rental_count AS average_comparison,
+  ROUND(100 * t1.rental_count / t2.total_rental_count) AS category_percentage
+FROM category_rental_counts AS t1 
+INNER JOIN customer_total_rentals AS t2
+  ON t1.customer_id = t2.customer_id
+INNER JOIN average_category_rental_counts AS t3 
+  ON t1.category_name = t3.category_name
+INNER JOIN customer_category_percentiles AS t4 
+  ON t1.customer_id = t4.customer_id
+  AND t1.category_name = t4.category_name;
+  
+-- Inspect the new table with calulations
+
+SELECT *
+FROM customer_category_joint_table
+WHERE customer_id = 1
+ORDER BY percentile
+limit 5;
+
+```
+
+**OUTPUT**
+
+
+<img width="1226" alt="image" src="https://user-images.githubusercontent.com/77873198/176808475-128967ce-0903-4542-97da-4535767b26e7.png">
+
+
+Here's the new table with the calculations completed. 
+
+### Checking the data types
+
+``` sql
+
+SELECT
+  table_name,
+  column_name,
+  data_type
+FROM information_schema.columns
+WHERE table_name in ('customer_total_rentals', 'category_rental_counts');
+
+```
+
+
+**OUTPUT**
+
+<img width="920" alt="image" src="https://user-images.githubusercontent.com/77873198/176808695-35662446-c689-40df-9103-d359f14a6614.png">
+
+
+Now that we have some information about the columns and their types the last thing we need to is extract the top rows per customer. 
+
 
