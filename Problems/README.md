@@ -98,7 +98,40 @@ ORDER BY
 This metric allows us to take into account the customer's most recent purchase history when breaking a tie. 
 
 ## Calculating Averages for the top two categories
-We now have all of the information needed to identify the top two categories per customer. 
+We now have all of the information needed to identify the top two categories per customer. However, we need to be careful in generating this output as we can lose some data if we try and aggregate before performing the calculation. What we need to do is calculate our percentages before we isolate the top 2 categories for each customer. **Remember**, we need to calculate the percentile in comparison to other customers, the percentage of the category on viewership, and the average comparison. 
+
+### Calculating customer rental count
+First, we should generate the customer rental count for each category on the whole dataset. However, let's make sure it works by first aggregating for 1 customer.
+
+``` sql
+
+DROP TABLE IF EXISTS category_rental_counts;
+CREATE TEMP TABLE category_rental_counts AS 
+SELECT
+  customer_id, 
+  category_name,
+  COUNT(*) AS rental_count,
+  MAX(rental_date) AS latest_rental_date
+FROM complete_joint_dataset
+GROUP BY
+  customer_id,
+  category_name;
+
+-- Preview one customer and sort rental count
+SELECT *
+FROM category_rental_counts
+WHERE customer_id = 1
+ORDER BY 
+  rental_count DESC;
+```
+
+**OUTPUT**
+
+<img width="933" alt="image" src="https://user-images.githubusercontent.com/77873198/176791484-5e2a644a-d755-4c79-9cb9-e0ea568b8441.png">
+
+It looks fine, what we'll do next is to generate the total rentals per customer that will be involved in the calculation for the `category_percentage`.
+
+``` sql
 
 
 
