@@ -376,3 +376,49 @@ WHERE table_name in ('customer_total_rentals', 'category_rental_counts');
 Now that we have some information about the columns and their types the last thing we need to is extract the top rows per customer. 
 
 
+### Extracting the last two rows per customer
+
+``` sql
+
+-- FILTER FOR THE top 2 rows
+
+DROP TABLE IF EXISTS top_categories_information;
+CREATE TEMP TABLE top_categories_information AS (
+WITH ordered_customer_category_joint_table AS (
+  SELECT
+    customer_id,
+    ROW_NUMBER() OVER (
+      PARTITION BY customer_id
+      ORDER BY rental_count DESC, latest_rental_date DESC 
+    ) AS category_ranking,
+    category_name,
+    rental_count,
+    average_comparison,
+    percentile,
+    category_percentage
+  FROM customer_category_joint_table
+)
+
+-- filter top 2 rows from the CTE for final output
+
+SELECT *
+FROM ordered_customer_category_joint_table
+WHERE category_ranking <= 2
+);
+
+
+-- Inspect the output for the first 3 customers
+
+SELECT * 
+FROM top_categories_information
+WHERE customer_id IN (1, 2, 3)
+ORDER BY customer_id, category_ranking;
+
+```
+
+**OUTPUT**
+
+<img width="1235" alt="image" src="https://user-images.githubusercontent.com/77873198/176811760-8dc58d00-8f4c-480a-972b-dc92cd826417.png">
+
+
+
