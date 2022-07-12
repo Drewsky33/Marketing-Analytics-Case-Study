@@ -355,7 +355,28 @@ WHERE NOT EXISTS (
 <img width="178" alt="image" src="https://user-images.githubusercontent.com/77873198/176080036-ac8b1e6e-c930-466f-ae7e-2cfbc4f09460.png">
 
 
-It looks like there is only one value that exists in the inventory table that doesn't exist in the rental table. We knew this already. We explained this could be a piece of inventory that hasn't been rented yet. 
+It looks like there is only one value that exists in the inventory table that doesn't exist in the rental table. We knew this already. We explained this could be a piece of inventory that hasn't been rented yet. **BUT,** to be sure, let's have a look:
+
+``` sql
+-- Which film is missing
+
+SELECT *
+FROM dvd_rentals.inventory
+WHERE NOT EXISTS(
+  SELECT inventory_id
+  FROM dvd_rentals.rental
+  WHERE rental.inventory_id = inventory.inventory_id
+);
+
+```
+
+**OUTPUT**
+
+<img width="825" alt="image" src="https://user-images.githubusercontent.com/77873198/178609364-5ca8dc9f-a9ca-4ead-b81e-49c0f818f3ee.png">
+
+
+It looks like we have one record as we thought in the inventory table which doesn't exist in the rental table. There's not much more information we can extract other than the last update column, but in the scope of this project, it's not going to make much of a difference to explore. 
+
 
 Since we've already seen that 0 values in the rentals table do not exist in the inventory table, or simply all of the values that exist in the rentals table also exist in the inventory table we can perform a left-semi join to double check that this is the case. This will give us the count of foreign key values that intersect between the two. 
 
