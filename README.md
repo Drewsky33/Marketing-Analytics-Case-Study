@@ -7,7 +7,7 @@ The marketing team has shared a draft of e-mails they wish to send to customers.
 
 I'll be using SQL to solve these problems and capture the data needed to ensure a smooth marketing campaign. 
 
-## Example email template
+## Problem
 
 
 Requirements:
