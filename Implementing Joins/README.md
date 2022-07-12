@@ -1,5 +1,5 @@
 
-### Joining the tables
+## Joining the tables
 We can now now implement the inner join, but I'm also going to do a left join to demonstrate that there isn't a difference between the output. 
 
 ```sql 
@@ -58,7 +58,7 @@ Again, we need to go through our questions of why we are completing this join:
 
 1. What's the purpose of this join?
 
-**Hypothesis for this table- Category**
+### Hypothesis for this table- Category
 
 - We want to match the films on the film_id so that we can get the film name or `title`. 
 - There is most likely a 1 to many relationship between the film_id table and the rows for the inventory table. This means that we have multiple copies of each film in inventory. 
@@ -160,7 +160,63 @@ WHERE NOT EXISTS (
 
 It looks like there are a significant amount of film_ids that are present in the film table, but not in the inventory table. 
 
-There's not much we can do about that as the store has it's inventory set, but this could be used later for adding more variety in film selection. Again, our goal is to make a personalized e-mail template so that falls outside of the scope of this project. 
+There's not much we can do about that as the store has it's inventory set, but this could be used later for adding more variety in film selection. Again, our goal is to make a personalized e-mail template so that falls outside of the scope of this project. **Next,** we are going to have a look at the relationship between the `actor_id` and the `film_id`. 
+
+
+### Hypothesis: Actor_Id
+Our hypothesis is that a single actor might show up in multiple films, or one film can have many actors. Let's have a look and see what kind of relationship these two columns have. 
+
+``` sql
+-- Join column analysis actor film count. 
+
+WITH actor_film_counts AS (
+  SELECT
+    actor_id,
+    COUNT(DISTINCT film_id) AS film_count
+  FROM dvd_rentals.film_actor
+  GROUP BY actor_id
+)
+
+SELECT
+  film_count,
+  COUNT(*) AS total_actors
+FROM actor_film_counts
+GROUP BY film_count
+ORDER BY film_count DESC;
+```
+
+**OUTPUT**
+
+<img width="316" alt="image" src="https://user-images.githubusercontent.com/77873198/178611722-8250b55b-a18c-4392-8b24-c778577a3bab.png">
+
+
+It looks like we can confirm that a single actor does indeed show up in multiple films. Some even shown up in more than 30 films! Let's have a look at our other question: One film can have many actors? We already know the answer to this, but it's helpful to explore. 
+
+``` sql
+
+WITH film_actor_counts AS (
+  SELECT
+    film_id,
+    COUNT(DISTINCT actor_id) AS actor_count
+  FROM dvd_rentals.film_actor
+  GROUP BY film_id
+)
+SELECT
+  actor_count,
+  COUNT(*) AS total_films
+FROM film_actor_counts
+GROUP BY actor_count
+
+```
+**OUTPUT**
+
+<img width="307" alt="image" src="https://user-images.githubusercontent.com/77873198/178612191-fb076083-b06f-41f7-8ef5-5c6417181826.png">
+
+
+Suprisingly enough some films only have a single actor starring in them. This is a bit of a surprise. Glad, we checked. 
+
+
+
 
 ### Implementing our next join
 Before we perform the join, let's take a look at how many unique film_id values we will generate when joining by performing a left semi join and gettting a count for the values in the base table (inventory). 
