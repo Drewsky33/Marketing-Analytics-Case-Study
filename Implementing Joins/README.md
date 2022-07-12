@@ -58,7 +58,7 @@ Again, we need to go through our questions of why we are completing this join:
 
 1. What's the purpose of this join?
 
-**Hypothesis for this table**
+**Hypothesis for this table- Category**
 
 - We want to match the films on the film_id so that we can get the film name or `title`. 
 - There is most likely a 1 to many relationship between the film_id table and the rows for the inventory table. This means that we have multiple copies of each film in inventory. 
