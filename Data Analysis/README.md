@@ -1,5 +1,5 @@
 
-# Problem
+# Data Exploration
 
 ## Approaching the problem
 To have an idea about how to tackle this business problem, we need to visualize what kind of output we want and then slowly work backwards. Essentially, we need to observe what kind of SQL outputs will allow us to match the requirements from the marketing team. 
