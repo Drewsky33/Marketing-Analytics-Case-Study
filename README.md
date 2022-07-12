@@ -9,6 +9,10 @@ I'll be using SQL to solve these problems and capture the data needed to ensure 
 
 ## Problem
 
+![Uploading image.png…]()
+
+
+
 Requirements:
 1. For each customer we need to identify the top 2 categories based on their past rental history. These categories will drive what kind of images will be put into the email. 
 2. The marketing team has also asked that we include the 3 most popular fils for each customer's top 2 categories. **However,** we can't recommend a film that the customer has seen already. If there isn't 3 films available, marketing is more than happy to show at least 1 film. If the customer doesn't have any film recommendations for either of their categories, then the customer needs to be flagged so they can be excluded from the email marketing campaign.
