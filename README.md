@@ -9,8 +9,7 @@ I'll be using SQL to solve these problems and capture the data needed to ensure 
 
 ## Problem
 
-![Uploading image.png…]()
-
+<img width="411" alt="image" src="https://user-images.githubusercontent.com/77873198/178606207-a8e67712-76e6-4b45-a5c1-92194c5d1f1e.png">
 
 
 Requirements:
