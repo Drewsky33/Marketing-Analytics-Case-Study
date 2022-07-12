@@ -41,6 +41,7 @@ The data exploration part of the analysis can be found [here](https://github.com
 
 ## [Data Analysis- What tables do we need?](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/blob/main/Data%20Analysis/README.md)
 
-## [Join Implementation]()
+## [Join Implementation](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/tree/main/Implementing%20Joins)
 
+## [Solving Our Problem]()
 
