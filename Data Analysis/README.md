@@ -1,5 +1,5 @@
 
-# Data Analysis
+# Problem
 
 ## Approaching the problem
 To have an idea about how to tackle this business problem, we need to visualize what kind of output we want and then slowly work backwards. Essentially, we need to observe what kind of SQL outputs will allow us to match the requirements from the marketing team. 
@@ -268,7 +268,7 @@ ORDER BY row_counts;
 
 
 
-**Inventory distribution analysis on `inventory_id` foreign key
+**Inventory distribution analysis** on `inventory_id` foreign key
 
 ``` sql 
 WITH counts_base AS (
