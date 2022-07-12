@@ -7,8 +7,7 @@ The marketing team has shared a draft of e-mails they wish to send to customers.
 
 I'll be using SQL to solve these problems and capture the data needed to ensure a smooth marketing campaign. 
 
-## [Problem](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/blob/main/Data%20Analysis/README.md)
-
+## Problem
 
 Requirements:
 1. For each customer we need to identify the top 2 categories based on their past rental history. These categories will drive what kind of images will be put into the email. 
