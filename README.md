@@ -10,7 +10,9 @@ I'll be using SQL to solve these problems and capture the data needed to ensure 
 ## Problem
 
 <img width="411" alt="image" src="https://user-images.githubusercontent.com/77873198/178606207-a8e67712-76e6-4b45-a5c1-92194c5d1f1e.png">
+
 [Source: Serious SQL by Danny Ma](https://www.datawithdanny.com/)
+
 
 Requirements:
 1. For each customer we need to identify the top 2 categories based on their past rental history. These categories will drive what kind of images will be put into the email. 
