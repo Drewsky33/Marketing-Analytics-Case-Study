@@ -69,5 +69,10 @@ LIMIT 10;
 <img width="1158" alt="image" src="https://user-images.githubusercontent.com/77873198/179047395-f73df06c-b2f0-4318-90a6-19c942d2d1a8.png">
 
 
+- **Category Counts**- Use the `complete_joint_dataset` to aggregate data and generate the `rental_count` and `rental_date` to be used later. 
+
+``` sql
+
+
 
 
