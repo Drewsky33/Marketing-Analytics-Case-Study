@@ -34,3 +34,40 @@ So at this point we have a basic idea of what we want to do.
 
 ## Category Insights
 
+- **Create base dataset**
+
+``` sql
+
+DROP TABLE IF EXISTS complete_joint_dataset;
+CREATE TEMP TABLE complete_joint_dataset AS
+SELECT
+  rental.customer_id,
+  inventory.film_id,
+  film.title,
+  category.name AS category_name,
+  -- also included rental_date for sorting purposes
+  rental.rental_date
+FROM dvd_rentals.rental
+INNER JOIN dvd_rentals.inventory
+  ON rental.inventory_id = inventory.inventory_id
+INNER JOIN dvd_rentals.film
+  ON inventory.film_id = film.film_id
+INNER JOIN dvd_rentals.film_category
+  ON film.film_id = film_category.film_id
+INNER JOIN dvd_rentals.category
+  ON film_category.category_id = category.category_id;
+
+-- Sample the dataset
+SELECT *
+FROM complete_joint_dataset
+LIMIT 10;
+
+```
+
+**OUTPUT**
+
+<img width="1158" alt="image" src="https://user-images.githubusercontent.com/77873198/179047395-f73df06c-b2f0-4318-90a6-19c942d2d1a8.png">
+
+
+
+
