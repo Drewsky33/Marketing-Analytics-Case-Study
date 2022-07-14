@@ -259,4 +259,38 @@ LIMIT 10;
 
 <img width="1068" alt="image" src="https://user-images.githubusercontent.com/77873198/179071209-56dd5ca8-ecab-4f99-b0d2-6d6da1e96161.png">
 
+We've created a lot of tables that we now need to combine into a single category insights table. The tables we'll be using are the `top_category_percentile` serving as the base table (because most of the information we need is in this table) we'll left join in order to preserve this information with our average table for the final average comparison. 
 
+- **1st Category Insights**
+
+``` sql
+
+DROP TABLE IF EXISTS first_category_insights;
+CREATE TEMP TABLE first_category_insights AS 
+
+-- alias the top_cateogry_percentile as base 
+SELECT
+  base.customer_id,
+  base.category_name, 
+  base.rental_count,
+  average.category_average,
+  base.rental_count - average.category_average AS average_comparison
+FROM top_category_percentile AS base
+LEFT JOIN average_category_count AS average
+  ON base.category_name = average.category_name;
+  
+-- View the table and average comparison 
+
+SELECT *
+FROM first_category_insights
+LIMIT 10;
+
+
+```
+
+**OUTPUT**
+
+<img width="1160" alt="image" src="https://user-images.githubusercontent.com/77873198/179073766-176337d3-78d5-4e90-8793-df04514d731f.png">
+
+
+As you can see we now have a table that has the rental count for the category for each customer, the average number of movies viewed for that category, and the difference between them which places each customer into a percentile based on viewership. 
