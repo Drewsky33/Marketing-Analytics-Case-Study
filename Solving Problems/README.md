@@ -175,5 +175,88 @@ LIMIT 6;
 
 <img width="865" alt="image" src="https://user-images.githubusercontent.com/77873198/179066862-f8cea06c-bdfa-4cc8-b44f-c1b68f5e86d4.png">
 
-We now have the top 2 categories for the first 3 customer id's. 
+We now have the top 2 categories for the first 3 customer id's. Next we need to get the average category count so that we can make a comparison for our top_category_percentile column that we will create downstream. 
+
+- **Average per category**
+
+``` sql
+
+-- Generate the average category count for comparison later 
+
+DROP TABLE IF EXISTS average_category_count;
+CREATE TEMP TABLE average_category_count AS 
+SELECT
+  category_name,
+  -- Round down to the nearest integer
+  FLOOR(AVG(rental_count)) AS category_average
+FROM category_counts
+GROUP BY category_name;
+
+-- Look at the new table and averages 
+
+SELECT *
+FROM average_category_count
+ORDER BY 
+  category_average DESC,
+  category_name;
+
+```
+
+**OUTPUT**
+
+<img width="448" alt="image" src="https://user-images.githubusercontent.com/77873198/179068636-0a67ff05-6260-4186-b6f7-a5e45b8a9121.png">
+
+Next, we're going to make a comparison with the average category counts from above to determine which percentile the customer falls in based on their viewership of the category. 
+
+- **Top Category Percentile**
+
+``` sql
+
+-- Create temp table to compare each customer's rental count for their top categories by comparing it to the average category count 
+DROP TABLE IF EXISTS top_category_percentile;
+CREATE TEMP TABLE top_category_percentile AS 
+WITH calculated_cte AS (
+SELECT
+  top_categories.customer_id,
+  top_categories.category_name AS top_category_name,
+  top_categories.rental_count,
+  category_counts.category_name,
+  top_categories.category_rank,
+  -- Create a percentage based on the category rental count 
+  PERCENT_RANK() OVER (
+    PARTITION BY category_counts.category_name
+    ORDER BY category_counts.rental_count DESC 
+  ) AS raw_percentile_value
+FROM category_counts
+LEFT JOIN top_categories
+  ON category_counts.customer_id = top_categories.customer_id
+)
+
+-- Select necessary information, we want to know the customer id, the category name of their top, the rental count, the category rank by customer, and percentile they fall in 
+SELECT
+  customer_id,
+  category_name,
+  rental_count, 
+  category_rank,
+  CASE
+    WHEN ROUND(100* raw_percentile_value) = 0 THEN 1
+    ELSE ROUND(100 * raw_percentile_value)
+  END AS percentile
+FROM calculated_cte
+WHERE 
+  category_rank = 1
+  AND top_category_name = category_name;
+  
+-- View the selection 
+
+SELECT *
+FROM top_category_percentile
+LIMIT 10;
+
+```
+
+**OUTPUT**
+
+<img width="1068" alt="image" src="https://user-images.githubusercontent.com/77873198/179071209-56dd5ca8-ecab-4f99-b0d2-6d6da1e96161.png">
+
 
