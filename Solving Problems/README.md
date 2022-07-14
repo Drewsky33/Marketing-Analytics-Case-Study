@@ -394,6 +394,51 @@ Now that we have a table that will serve as the filter, we will use an anti join
 
 ``` sql
 
+DROP TABLE IF EXISTS category_recommendations;
+CREATE TEMP TABLE category_recommendations AS
+WITH ranked_films_cte AS (
+  SELECT
+    top_categories.customer_id,
+    top_categories.category_name,
+    top_categories.category_rank,
+    film_counts.film_id,
+    film_counts.title,
+    film_counts.rental_count,
+    DENSE_RANK() OVER (
+      PARTITION BY
+        top_categories.customer_id,
+        top_categories.category_rank
+      ORDER BY
+        film_counts.rental_count DESC,
+        film_counts.title
+    ) AS reco_rank
+  FROM top_categories
+  INNER JOIN film_counts
+    ON top_categories.category_name = film_counts.category_name
+  -- This is a tricky anti-join where we need to "join" on 2 different tables!
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM category_film_exclusions
+    WHERE
+      category_film_exclusions.customer_id = top_categories.customer_id AND
+      category_film_exclusions.film_id = film_counts.film_id
+  )
+)
+SELECT * FROM ranked_films_cte
+WHERE reco_rank <= 3;
 
+
+-- Check the recommendation ranks for each customer by category
+SELECT *
+FROM category_recommendations
+WHERE customer_id = 1
+ORDER BY category_rank, reco_rank;
 
 ```
+
+**OUTPUT**
+
+![Uploading image.png…]()
+
+
+
