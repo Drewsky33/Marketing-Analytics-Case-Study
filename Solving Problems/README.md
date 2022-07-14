@@ -552,6 +552,41 @@ We know have the top ranked actor for each customer based on movies viewed with 
 
 ``` sql
 
+-- Generate actor film counts table
+DROP TABLE IF EXISTS actor_film_counts;
+CREATE TEMP TABLE actor_film_counts AS
+WITH film_counts AS (
+  SELECT
+    film_id,
+    COUNT(DISTINCT rental_id) AS rental_count
+  FROM actor_joint_dataset
+  GROUP BY film_id
+)
+SELECT DISTINCT
+  actor_joint_dataset.film_id,
+  actor_joint_dataset.actor_id,
+  -- why do we keep the title here? can you figure out why?
+  actor_joint_dataset.title,
+  film_counts.rental_count
+FROM actor_joint_dataset
+LEFT JOIN film_counts
+  ON actor_joint_dataset.film_id = film_counts.film_id;
+
+-- Look at the new table
+SELECT *
+FROM actor_film_counts
+LIMIT 10;
+
 ```
+**OUTPUT**
+
+<img width="747" alt="image" src="https://user-images.githubusercontent.com/77873198/179118055-ddae4e8d-90f1-427a-9c0f-bc8d21c9f147.png">
+
+
+We now have a table with the film_id, the id for each actor in the film, the movie title, and the number of times that title has been rented. 
+
+- **Actor Film Exclusions**: We need to exclude films that we've already seen from our final table in order to make relevant recommendations. We also need to perform a UNION that will exclude category recommendations we have given to customers. We don't want customers to receive recommendations for the same film in one e-mail, which is why we make this recommendation. 
+
+
 
 
