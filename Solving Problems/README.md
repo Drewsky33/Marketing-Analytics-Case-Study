@@ -441,5 +441,117 @@ ORDER BY category_rank, reco_rank;
 <img width="1115" alt="image" src="https://user-images.githubusercontent.com/77873198/179101268-63b50805-e04d-45b4-8053-2c991dd7c9c8.png">
 
 
+So we now have the top 3 rated movies by category based on the rental count. Our next task is to focus on the actor insights. 
+
+## Actor Insights
+
+- **Actor Joint Table**: For this analysis, we'll need to create a new base table. The reason for this is that we need information from `dvd_rentals.film_actor` and `dvd_rentals.actor` tables to extract the information required for our final output. We ultimately want to choose 3 of the top 3 films for each customer's favorite actor that they haven't watched.
+
+``` sql
+
+-- Create a base table to generate actor insights and recommendations
+DROP TABLE IF EXISTS actor_joint_dataset;
+CREATE TEMP TABLE actor_joint_dataset AS 
+SELECT
+  rental.customer_id,
+  rental.rental_id,
+  rental.rental_date,
+  film.film_id,
+  film.title,
+  actor.actor_id,
+  actor.first_name,
+  actor.last_name
+FROM dvd_rentals.rental
+INNER JOIN dvd_rentals.inventory
+  ON rental.inventory_id = inventory.inventory_id
+INNER JOIN dvd_rentals.film
+  ON inventory.film_id = film.film_id
+INNER JOIN dvd_rentals.film_actor 
+  ON film.film_id = film_actor.film_id
+INNER JOIN dvd_rentals.actor 
+  ON film_actor.actor_id = actor.actor_id;
+  
+-- Observe the new table
+SELECT *
+FROM actor_joint_dataset
+WHERE customer_id = 1
+LIMIT 10;
+
+```
+
+**OUTPUT**
+
+<img width="1001" alt="image" src="https://user-images.githubusercontent.com/77873198/179114567-ce411b0b-418f-468e-8746-ec72e2f4cafb.png">
+
+
+We've now got a table with each customer id, film names, and the names of all the actors that participated in each film. We also have the id information for each film and actor for analysis later. 
+
+- **Top Actor Counts**
+
+``` sql
+
+-- Generate top actor counts table 
+DROP TABLE IF EXISTS top_actor_counts;
+CREATE TEMP TABLE top_actor_counts AS 
+WITH actor_counts AS (
+  SELECT
+    customer_id,
+    actor_id,
+    first_name,
+    last_name,
+    COUNT(*) AS rental_count,
+    MAX(rental_date) AS latest_rental_date
+  FROM actor_joint_dataset
+  GROUP BY 
+    customer_id,
+    actor_id,
+    first_name,
+    last_name
+),
+
+ranked_actor_counts AS (
+  SELECT
+    actor_counts.*,
+    DENSE_RANK() OVER (
+      PARTITION BY customer_id
+      ORDER BY 
+        rental_count DESC,
+        latest_rental_date DESC,
+        first_name,
+        last_name
+    ) AS actor_rank
+  FROM actor_counts
+) 
+SELECT
+  customer_id,
+  actor_id,
+  first_name,
+  last_name,
+  rental_count
+FROM ranked_actor_counts
+WHERE actor_rank = 1;
+
+-- Observe the new table 
+
+SELECT *
+FROM top_actor_counts
+LIMIT 10;
+
+```
+
+**OUTPUT**
+
+
+<img width="872" alt="image" src="https://user-images.githubusercontent.com/77873198/179116542-e520152f-1eb8-4a61-a887-0cd0ee200673.png">
+
+We know have the top ranked actor for each customer based on movies viewed with that actor. This table will be satisfactory in making our recommendations. 
+
+## Actor Recommendations
+
+- **Actor Film Counts**: The first thing we need to do is build an aggregated total rentals table. We need to retain the `actor_id` and `film_id` in order to join with the `top_actor_counts` tabe we created before. 
+
+``` sql
+
+```
 
 
