@@ -73,6 +73,73 @@ LIMIT 10;
 
 ``` sql
 
+-- Create category counts 
+
+DROP TABLE IF EXISTS category_counts;
+CREATE TEMP TABLE category_counts AS 
+SELECT
+  customer_id,
+  category_name,
+  COUNT(*) AS rental_count,
+  
+  -- latest_rental_date is a tiebreaker used downstream
+  MAX(rental_date) AS latest_rental_date
+FROM complete_joint_dataset
+GROUP BY
+  customer_id,
+  category_name;
+
+
+-- Look at the category_counts table 
+SELECT *
+FROM category_counts
+WHERE customer_id = 1
+ORDER BY
+  rental_count DESC,
+  latest_rental_date DESC;
+  
+```
+
+**OUTPUT**
+
+<img width="1159" alt="image" src="https://user-images.githubusercontent.com/77873198/179048728-74222ee0-4ed0-4c68-85cb-7b1cc406667f.png">
+
+
+- **Total counts**- aggregate all customers total films watched. 
+
+``` sql
+
+-- Aggregate films into new table called total_counts
+
+DROP TABLE IF EXISTS total_counts;
+CREATE TEMP TABLE total_counts AS 
+SELECT
+  customer_id,
+  SUM(rental_count) AS total_count
+FROM category_counts
+GROUP BY
+  customer_id;
+  
+-- Look at the new table 
+
+SELECT *
+FROM total_counts
+ORDER BY total_count DESC
+LIMIT 5;
+
+```
+
+**OUTPUT**
+
+<img width="313" alt="image" src="https://user-images.githubusercontent.com/77873198/179049461-b9f6a573-b455-452c-8981-3ec2f8eb6397.png">
+
+
+Next, we'll move on to generating the top categories. 
+
+- **Top Categories**: Let's generate a rank of the categories for each customer. We will split ties using the latest_rental_data value we created in the `category_counts` table. 
+
+``` sql
+
 
 
 
