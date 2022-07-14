@@ -140,6 +140,40 @@ Next, we'll move on to generating the top categories.
 
 ``` sql
 
+-- Generate top categories table 
+DROP TABLE IF EXISTS top_categories;
+CREATE TEMP TABLE top_categories AS 
+WITH ranked_cte AS (
+  SELECT
+    customer_id,
+    category_name,
+    rental_count,
+    DENSE_RANK() OVER (
+      PARTITION BY customer_id
+      ORDER BY 
+        rental_count DESC,
+        latest_rental_date DESC,
+        category_name
+    ) AS category_rank
+  FROM category_counts
+) 
 
+-- Take out the top category ranks 
 
+SELECT *
+FROM ranked_cte 
+WHERE category_rank <= 2;
+
+-- Observe the query
+SELECT *
+FROM top_categories
+LIMIT 6;
+
+```
+
+**OUTPUT**
+
+<img width="865" alt="image" src="https://user-images.githubusercontent.com/77873198/179066862-f8cea06c-bdfa-4cc8-b44f-c1b68f5e86d4.png">
+
+We now have the top 2 categories for the first 3 customer id's. 
 
