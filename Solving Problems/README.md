@@ -438,7 +438,8 @@ ORDER BY category_rank, reco_rank;
 
 **OUTPUT**
 
-![Uploading image.png…]()
+<img width="1115" alt="image" src="https://user-images.githubusercontent.com/77873198/179101268-63b50805-e04d-45b4-8053-2c991dd7c9c8.png">
+
 
 
 
