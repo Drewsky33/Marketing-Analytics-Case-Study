@@ -293,4 +293,39 @@ LIMIT 10;
 <img width="1160" alt="image" src="https://user-images.githubusercontent.com/77873198/179073766-176337d3-78d5-4e90-8793-df04514d731f.png">
 
 
-As you can see we now have a table that has the rental count for the category for each customer, the average number of movies viewed for that category, and the difference between them which places each customer into a percentile based on viewership. 
+As you can see we now have a table that has the rental count for the category for each customer, the average number of movies viewed for that category, and the difference between them which places each customer into a percentile based on viewership. Next, we will have to calculate the ratio of movies viewed in the second top category when compared with the total movies viewed for each customer. 
+
+- **Second Insight**: (2nd top category rental count / total movies viewed for customer) * 100
+
+``` sql
+
+-- Generate a second table for 2nd category insights 
+
+DROP TABLE IF EXISTS second_category_insights;
+CREATE TEMP TABLE second_category_insights AS 
+SELECT
+  base.customer_id,
+  base.category_name,
+  base.rental_count,
+  -- Cast as a numeric to avoid INTEGER floor division
+  ROUND(
+    100 * base.rental_count::NUMERIC / total.total_count
+  ) AS percentage_total_viewing
+FROM top_categories AS base
+LEFT JOIN total_counts AS total
+  ON base.customer_id = total.customer_id
+WHERE category_rank = 2;
+
+-- Check the second category insights
+SELECT * 
+FROM second_category_insights
+LIMIT 10;
+
+```
+
+**OUTPUT**:
+
+<img width="919" alt="image" src="https://user-images.githubusercontent.com/77873198/179088524-76832c10-d8c0-4247-b9aa-9c84cfcdbf9f.png">
+
+
+As you can see there is now a percentage row which is the percentage that their 2nd top category makes up of their total viewership. 
