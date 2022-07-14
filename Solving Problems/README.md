@@ -328,4 +328,72 @@ LIMIT 10;
 <img width="919" alt="image" src="https://user-images.githubusercontent.com/77873198/179088524-76832c10-d8c0-4247-b9aa-9c84cfcdbf9f.png">
 
 
-As you can see there is now a percentage row which is the percentage that their 2nd top category makes up of their total viewership. 
+As you can see there is now a percentage row which is the percentage that their 2nd top category makes up of their total viewership. We've now generated the insights for each customer's top two categories. What we need to do next is generate the recommendations based on these insights. 
+
+## Category Recommendations
+
+- **Film counts**: Next we want to generate film counts for each movie in the category and then sort them by most viewed to get the most popular films.
+
+``` sql
+
+-- Generate film counts for each unique movie in each category 
+DROP TABLE IF EXISTS film_counts;
+CREATE TEMP TABLE film_counts AS 
+SELECT DISTINCT
+  film_id,
+  title,
+  category_name,
+  COUNT(*) OVER (
+    PARTITION BY film_id
+  ) AS rental_count
+FROM complete_joint_dataset;
+
+-- Observe the new table with the film counts 
+SELECT *
+FROM film_counts
+ORDER BY rental_count DESC
+LIMIT 10;
+
+```
+
+**OUTPUT**
+
+<img width="879" alt="image" src="https://user-images.githubusercontent.com/77873198/179089690-a631a750-c799-4865-85b2-bd4962c8be6d.png">
+
+
+We now have the rental count for each film. So basically, how many time each film has been rented. Additionally, we select the distinct features of the title and the category name. Next, we have to generate a table that with customer's previously watchec films so we don't recommend movies they've already seen. 
+
+- **Category Film exclusion**
+
+``` sql
+
+-- Create a table that has the viewing history of each customer 
+
+DROP TABLE IF EXISTS category_film_exclusions;
+CREATE TEMP TABLE category_film_exclusions AS 
+SELECT DISTINCT
+  customer_id,
+  film_id
+FROM complete_joint_dataset;
+
+-- Observe the table 
+SELECT *
+FROM category_film_exclusions
+LIMIT 10;
+
+```
+
+
+**OUTPUT**
+
+<img width="320" alt="image" src="https://user-images.githubusercontent.com/77873198/179090800-b8f17e25-fec1-48d1-ab1c-3e344ee4cdb5.png">
+
+- **Final category recommendations**:
+
+Now that we have a table that will serve as the filter, we will use an anti join on the film exclusions table for the top two categories in teh top categories table. Then we'll use a window function to select the top 3 films for each of the top 2 categories per customer. Need to keep the category rank column in the final output to easily identify each customer's top choices of category. 
+
+``` sql
+
+
+
+```
