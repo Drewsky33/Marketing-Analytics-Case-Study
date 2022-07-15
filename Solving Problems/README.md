@@ -628,8 +628,62 @@ Great, now we can move to making the final recommendations for each actor.
 
 ``` sql
 
+-- Generate final actor recomendations table 
 
+DROP TABLE IF EXISTS actor_recommendations;
+CREATE TEMP TABLE actor_recommendations AS 
+WITH ranked_actor_films_cte AS (
+  SELECT
+    top_actor_counts.customer_id,
+    top_actor_counts.first_name,
+    top_actor_counts.last_name,
+    top_actor_counts.rental_count,
+    actor_film_counts.title,
+    actor_film_counts.film_id,
+    actor_film_counts.actor_id,
+    DENSE_RANK() OVER (
+      PARTITION BY
+        top_actor_counts.customer_id
+      ORDER BY 
+        actor_film_counts.rental_count DESC,
+        actor_film_counts.title
+    ) AS reco_rank
+  FROM top_actor_counts
+  INNER JOIN actor_film_counts
+    ON top_actor_counts.actor_id = actor_film_counts.actor_id
+    
+  -- Anti join to filter 
+  
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM actor_film_exclusions
+    WHERE
+      actor_film_exclusions.customer_id = top_actor_counts.customer_id AND 
+      actor_film_exclusions.film_id = actor_film_counts.film_id
+  )
+)
+
+-- Select all information for each actor in the top the recommended rank in terms of film_counts
+SELECT *
+FROM ranked_actor_films_cte
+WHERE reco_rank <= 3;
+
+-- Observe new table
+SELECT *
+FROM actor_recommendations
+ORDER BY 
+  customer_id,
+  reco_rank
+LIMIT 15;
 
 
 ```
+
+**OUTPUT**
+
+<img width="1158" alt="image" src="https://user-images.githubusercontent.com/77873198/179123925-0bf44569-d903-4f4d-b39c-b44eeafc05dc.png">
+
+
+We now have all of the insights needed to solve our problmem and generate a table that can be used by the marketing team. 
+
 
