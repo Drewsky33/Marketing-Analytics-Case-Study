@@ -48,6 +48,6 @@ The data exploration part of the analysis can be found [here](https://github.com
 
 ## [Join Implementation](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/tree/main/Implementing%20Joins)
 
-## [Solving Our Problem]()
+## [Solving Our Problem](https://github.com/Drewsky33/Marketing-Analytics-Case-Study/blob/main/Solving%20Problems/README.md)
 
 ## [Report]()
