@@ -588,5 +588,48 @@ We now have a table with the film_id, the id for each actor in the film, the mov
 - **Actor Film Exclusions**: We need to exclude films that we've already seen from our final table in order to make relevant recommendations. We also need to perform a UNION that will exclude category recommendations we have given to customers. We don't want customers to receive recommendations for the same film in one e-mail, which is why we make this recommendation. 
 
 
+``` sql
 
+-- Generate actor film exclusion table 
+DROP TABLE IF EXISTS actor_film_exclusions;
+CREATE TEMP TABLE actor_film_exclusions AS 
+
+(
+  SELECT DISTINCT
+    customer_id,
+    film_id
+  FROM complete_joint_dataset
+)
+-- Combine with previously wathched and recommended films 
+
+UNION 
+(
+  SELECT DISTINCT
+    customer_id,
+    film_id
+  FROM category_recommendations
+);
+
+-- Look at the new table 
+SELECT *
+FROM actor_film_exclusions
+LIMIT 10;
+
+```
+
+**OUTPUT**
+
+<img width="1158" alt="image" src="https://user-images.githubusercontent.com/77873198/179121472-7010c2c8-ed96-4fe6-95a4-7260739ede4e.png">
+
+
+Great, now we can move to making the final recommendations for each actor. 
+
+- **Final Actor Recommendations**
+
+``` sql
+
+
+
+
+```
 
